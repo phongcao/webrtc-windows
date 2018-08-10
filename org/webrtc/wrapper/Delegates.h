@@ -24,7 +24,9 @@ namespace Org {
 			uint32, uint32,
 			const Platform::Array<uint8>^, uint32,
 			const Platform::Array<uint8>^, uint32,
-			const Platform::Array<uint8>^, uint32);
+			const Platform::Array<uint8>^, uint32,
+			float, float, float,
+			float, float, float, float);
 
 		/// <summary>
 		/// Delegate for receiving video frames from EncodedVideoSource.

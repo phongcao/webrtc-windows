@@ -430,7 +430,9 @@ namespace Org {
 				void RawVideoFrame(uint32 width, uint32 height,
 					const Platform::Array<uint8>^ yPlane, uint32 yPitch,
 					const Platform::Array<uint8>^ vPlane, uint32 vPitch,
-					const Platform::Array<uint8>^ uPlane, uint32 uPitch);
+					const Platform::Array<uint8>^ uPlane, uint32 uPitch,
+					float posX, float posY, float posZ,
+					float rotX, float rotY, float rotZ, float rotW);
 			public:
 				/// <summary>
 				/// Raw video frame has been received.
@@ -507,6 +509,7 @@ namespace Org {
 
 		public:
 			static Media^ CreateMedia();
+			static void SetSpatialCoordinateSystem(Windows::Perception::Spatial::ISpatialCoordinateSystem^ spatialCoordinateSystem);
 
 			virtual ~Media();
 

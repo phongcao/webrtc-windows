@@ -285,6 +285,9 @@ namespace Org {
 		}
 
 		void RawVideoStream::RenderFrame(const webrtc::VideoFrame* frame) {
+			float posX, posY, posZ, rotX, rotY, rotZ, rotW;
+			frame->get_camera_transform(&posX, &posY, &posZ, &rotX, &rotY, &rotZ, &rotW);
+
 			rtc::scoped_refptr<webrtc::PlanarYuvBuffer> frameBuffer =
 				static_cast<webrtc::PlanarYuvBuffer*>(frame->video_frame_buffer().get());
 			_videoSource->RawVideoFrame((uint32)frame->width(), (uint32)frame->height(),
@@ -296,7 +299,9 @@ namespace Org {
 				frameBuffer->StrideU(),
 				Platform::ArrayReference<uint8>((uint8*)frameBuffer->DataV(),
 				(unsigned int)(frameBuffer->StrideV() * ((frame->height() + 1) / 2))),
-				frameBuffer->StrideV());
+				frameBuffer->StrideV(),
+				posX, posY, posZ,
+				rotX, rotY, rotZ, rotW);
 		}
 
 		// = RawVideoSource =============================================================
@@ -310,8 +315,11 @@ namespace Org {
 		void RawVideoSource::RawVideoFrame(uint32 width, uint32 height,
 			const Platform::Array<uint8>^ yPlane, uint32 yPitch,
 			const Platform::Array<uint8>^ vPlane, uint32 vPitch,
-			const Platform::Array<uint8>^ uPlane, uint32 uPitch) {
-			OnRawVideoFrame(width, height, yPlane, yPitch, vPlane, vPitch, uPlane, uPitch);
+			const Platform::Array<uint8>^ uPlane, uint32 uPitch,
+			float posX, float posY, float posZ,
+			float rotX, float rotY, float rotZ, float rotW) {
+			OnRawVideoFrame(width, height, yPlane, yPitch, vPlane, vPitch, uPlane, uPitch,
+				posX, posY, posZ, rotX, rotY, rotZ, rotW);
 		}
 
 		RawVideoSource::~RawVideoSource() {
@@ -426,6 +434,10 @@ namespace Org {
 
 		Media^ Media::CreateMedia() {
 			return ref new Media();
+		}
+
+		void Media::SetSpatialCoordinateSystem(Windows::Perception::Spatial::ISpatialCoordinateSystem^ spatialCoordinateSystem) {
+			webrtc::VideoCommonWinUWP::SetSpatialCoordinateSystem(spatialCoordinateSystem);
 		}
 
 		namespace globals {
